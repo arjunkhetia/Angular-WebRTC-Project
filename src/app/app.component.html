@@ -1,0 +1,263 @@
+<div class="container">
+  <div class="jumbotron jumbotron-fluid text-center">
+    <div class="container">
+      <h1 class="display-4">{{ title }}</h1>
+      <p class="lead">{{ introline }}</p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <table class="table table-dark table-striped">
+        <thead>
+          <tr class="text-center">
+            <th>Client ID</th>
+            <th>Socket ID</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let client of clients" class="text-center">
+            <td>{{ client['clientId'] }}</td>
+            <td>{{ client['socketId'] }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <strong>Client ID</strong> : {{ clientId }}
+          <br />
+          <strong>Socket ID</strong> : {{ socketId }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="container">
+      <div class="col card">
+        <div class="card-body">
+          <div class="container" style="padding-top: 0;">
+            <div class="row text-center">
+              <div class="col-sm">
+                <button type="button" class="btn btn-block" [ngClass]="textEnable ? 'btn-info' : 'btn-secondary'" [disabled]="connected" (click)="enableText()">
+                  <i class="fa fa-font" aria-hidden="true"></i> Text </button>
+              </div>
+              <div class="col-sm">
+                <button type="button" class="btn btn-block" [ngClass]="fileEnable ? 'btn-info' : 'btn-secondary'" [disabled]="connected" (click)="enableFile()">
+                  <i class="fa fa-files-o" aria-hidden="true"></i> File </button>
+              </div>
+              <div class="col-sm">
+                <button type="button" class="btn btn-block" [ngClass]="audioEnable ? 'btn-info' : 'btn-secondary'" [disabled]="connected" (click)="enableAudio()">
+                  <i class="fa fa-volume-up" aria-hidden="true"></i> Audio </button>
+              </div>
+              <div class="col-sm">
+                <button type="button" class="btn btn-block" [ngClass]="videoEnable ? 'btn-info' : 'btn-secondary'" [disabled]="connected" (click)="enableVideo()">
+                  <i class="fa fa-video-camera" aria-hidden="true"></i> Video </button>
+              </div>
+              <div class="col-sm">
+                <button type="button" class="btn btn-block" [ngClass]="screenEnable ? 'btn-info' : 'btn-secondary'" [disabled]="connected" (click)="enableScreen()">
+                  <i class="fa fa-window-restore" aria-hidden="true"></i> Screen </button>
+              </div>
+            </div>
+          </div>
+          <br />
+          <div class="btn-toolbar">
+            <div class="input-group flex-nowrap col-md-10">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="addon-wrapping"> Client ID </span>
+              </div>
+              <input type="text" class="form-control" placeholder="Enter Client Id To Connect..." aria-label="toClientId" aria-describedby="addon-wrapping" [(ngModel)]="toClientId" [disabled]="connected">
+            </div>
+            <div class="btn-group col-md-2">
+              <button *ngIf="!connected" type="button" class="btn btn-success" (click)="connect()">
+                <i class="fa fa-compress" aria-hidden="true"></i> Connect
+              </button>
+              <button *ngIf="connected" type="button" class="btn btn-danger" (click)="disconnect()">
+                <i class="fa fa-expand" aria-hidden="true"></i> Disconnect
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row" *ngIf="textEnable">
+    <div class="container">
+      <div class="card">
+        <div class="card-body">
+          <div class="container">
+            <div class="card">
+              <div class="card-body">
+                <div *ngFor="let message of messages">
+                  <strong>Client-{{ message['clientId'] }} : </strong> {{ message['data'] }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <br />
+          <div class="btn-toolbar">
+            <div class="input-group flex-nowrap col-md-10">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="addon-wrapping"> Message </span>
+              </div>
+              <input type="text" class="form-control" placeholder="Enter Message To Send..." aria-label="message" aria-describedby="addon-wrapping" [(ngModel)]="message" [disabled]="!connected">
+            </div>
+            <div class="btn-group col-md-2">
+              <button type="button" class="btn btn-primary" (click)="sendMessage()" [disabled]="!connected">
+                <i class="fa fa-paper-plane-o" aria-hidden="true"></i> Send
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row" *ngIf="fileEnable">
+    <div class="container">
+      <div class="card">
+        <div class="card-body">
+          <div class="container btn-toolbar">
+            <div class="custom-file input-group flex-nowrap col-md-10">
+              <input type="file" class="custom-file-input" id="file" (change)="handleFileInput($event.target.files)" [disabled]="!connected">
+              <label class="custom-file-label" for="file">{{ sendFileName }}</label>
+            </div>
+            <div class="btn-group col-md-2">
+              <button type="button" class="btn btn-warning" (click)="sendFile()" [disabled]="sendFileName == 'Choose file' || !connected">
+                <i class="fa fa-paper-plane-o" aria-hidden="true"></i> Send
+              </button>
+            </div>
+          </div>
+          <br />
+          <div class="container">
+            <div class="row">
+              <div class="col-md-2 text-center">
+                Send Progress :
+              </div>
+              <div class="col-md-10">
+                <div class="progress">
+                  <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" [style.width.%]="sendProgressValue" aria-valuenow="progressValue" aria-valuemin="sendProgressMin" aria-valuemax="sendProgressMax">
+                    <strong> {{ sendProgressValue }} %</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br />
+          <div class="row">
+            <div class="col-md-2 text-left">
+              Received :
+            </div>
+          </div>
+          <div class="container">
+            <div class="row">
+              <div class="col-md-2 text-right">
+                File Name :
+              </div>
+              <div class="col-md-10">
+                {{ receivedFileName }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2 text-right">
+                File Type :
+              </div>
+              <div class="col-md-10">
+                {{ receivedFileType }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2 text-right">
+                File Size :
+              </div>
+              <div class="col-md-10">
+                {{ receivedFileSize }}
+              </div>
+            </div>
+          </div>
+          <div class="container">
+            <div class="row">
+              <div class="col-md-2 text-center">
+                Receive Progress :
+              </div>
+              <div class="col-md-10">
+                <div class="progress">
+                  <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" role="progressbar" [style.width.%]="receivedProgressValue" aria-valuenow="receivedProgressValue" aria-valuemin="receivedProgressMin" aria-valuemax="receivedProgressMax">
+                    <strong> {{ receivedProgressValue }} %</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="container">
+            <div class="text-center">
+              <button type="button" class="btn btn-primary" (click)="downloadFile()" [disabled]="!enableDownload">
+                <i class="fa fa-download" aria-hidden="true"></i> Download File
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row" *ngIf="audioEnable">
+    <div class="container">
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 text-center">
+              <audio #audioElement controls>
+                <source>
+              </audio>
+            </div>
+            <div class="col-md-6 text-center">
+              <audio #remoteAudioElement controls>
+                <source>
+              </audio>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row" *ngIf="videoEnable">
+    <div class="container">
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 text-center">
+              <video #videoElement class="img-border" width="{{ videoWidth }}" height="{{ videoHeight }}">
+                <source>
+              </video>
+            </div>
+            <div class="col-md-6 text-center">
+              <video #remoteVideoElement class="img-border" width="{{ videoWidth }}" height="{{ videoHeight }}">
+                <source>
+              </video>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row" *ngIf="screenEnable">
+    <div class="container">
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 text-center">
+              <video #screenElement class="img-border" width="{{ screenWidth }}" height="{{ screenHeight }}">
+                <source>
+              </video>
+            </div>
+            <div class="col-md-6 text-center">
+              <video #remoteScreenElement class="img-border" width="{{ screenWidth }}" height="{{ screenHeight }}">
+                <source>
+              </video>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer"></div>
+</div>

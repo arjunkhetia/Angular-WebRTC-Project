@@ -1,0 +1,29 @@
+h1 {
+  font-size: 25px;
+  @media (min-width: 768px) {
+    font-size: 32px;
+  }
+  @media (min-width: 992px) {
+    font-size: 36px;
+  }
+  @media (min-width: 1200px) {
+    font-size: 40px;
+  }
+}
+
+.container {
+  width: 100%;
+  height: auto;
+  margin: auto;
+  padding-top: 10px;
+}
+
+.jumbotron {
+  margin-bottom: 15px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.footer {
+  padding-top: 20px;
+}
